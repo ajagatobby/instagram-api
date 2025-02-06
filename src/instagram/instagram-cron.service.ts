@@ -47,10 +47,17 @@ export class InstagramCronService {
       // Comment on each post
       for (const post of posts.data) {
         try {
+          // Random delay between 5-10 minutes (300000-600000 milliseconds)
+          const delayMs = Math.floor(
+            Math.random() * (600000 - 300000 + 1) + 300000,
+          );
+          this.logger.log(
+            `Waiting ${Math.round(delayMs / 1000)} seconds before commenting on post ${post.id}`,
+          );
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+
           await this.instagramService.addComment(post.id, commentText);
           this.logger.log(`Successfully commented on post ${post.id}`);
-
-          await new Promise((resolve) => setTimeout(resolve, 5000));
         } catch (error) {
           this.logger.error(`Failed to comment on post ${post.id}:`, error);
           continue;
